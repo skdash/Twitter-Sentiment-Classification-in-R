@@ -14,8 +14,8 @@ pause <- function() invisible(readline())
 requestURL <- "https://api.twitter.com/oauth/request_token"
 accessURL <- "https://api.twitter.com/oauth/access_token"
 authURL <- "https://api.twitter.com/oauth/authorize"
-consumerKey <- "zAXKGDyOHE25DTU28CW3QltLQ"
-consumerSecret <- "Esjy0exqpT8woU9YN7gKPthCzTM5OLn8Tc4jPVc1qHqqJ74gRh"
+consumerKey <- "**************************"
+consumerSecret <- "*************************"
 my_oauth <- OAuthFactory$new(consumerKey = consumerKey, consumerSecret = consumerSecret, 
                              requestURL = requestURL, accessURL = accessURL, authURL = authURL)
 
@@ -31,7 +31,7 @@ if(file.exists("tweets.json")== TRUE)
 #Capture Love and Hate tweets from twitter stream for 60 seconds each and store it in
 #tweets.json
 
-cat("Capturing  Tweets...........")
+cat("Capturing  Tweets")
 
 filterStream("tweets.json", track = c("love"), timeout = 30, language='en', 
              oauth = my_oauth)
@@ -42,14 +42,14 @@ filterStream("tweets.json", track = c("hate"), timeout = 30, language='en',
 
 #Parse The Tweets Received
 
-cat("-----PARSING TWEETS------")
+cat("Parsing Tweets------")
 tweets.df <- parseTweets("tweets.json", simplify = TRUE)
 tweets_text = tweets.df$text
 
 #Pre process the tweets by removing unicode characters, punctuation, 
 #Convert to lowercase, remove Numbers, stopwords
 
-cat("-----PRE PROCESSING TWEETS")
+cat("-----Pre-Processing Tweets")
 
 usableText=str_replace_all(tweets_text,"[^[:graph:]]", " ") 
 corpus <- Corpus(VectorSource(usableText))
@@ -71,8 +71,6 @@ a <- DocumentTermMatrix(text_stem)
 cat("Converting Document Term Matrix to Matrix")
 #Convert Document Term Matrix to Matrix (stored in td.mat)
 td.mat <- as.matrix(a)
-
-
 
 #Perform Feature Set Selection using TOP-K 
 
@@ -166,9 +164,7 @@ datastream <- datastream_dataframe(data=DF_without)
 
 cat("-----Training the Model-----")
 
-mymodel_classifier <- trainMOA(model = hdt, 
-                               formula = tweetFormula , 
-                               data = datastream)
+mymodel_classifier <- trainMOA(model = hdt, formula = tweetFormula , data = datastream)
 
 cat("-----Training Over-------")
 
@@ -176,7 +172,6 @@ cat("-----Training Over-------")
 #scores <- predict(mymodel_classifier, newdata=DF_without, type="response")
 #str(scores)
 #table(scores, DF_without$verdict)
-
 
 #######TEST NEW DATA#####
 
@@ -188,14 +183,14 @@ while(TRUE)
   #Capture Love and Hate tweets from twitter stream for 60 seconds each and store it in
   #tweets.json
   
-  cat("---------Capturing new Tweets for Test Data---------")
+  cat("Capturing new Tweets for Test Data")
   
   filterStream("tweets.json", track = c("love"), timeout = 30, language='en', 
                oauth = my_oauth)
   filterStream("tweets.json", track = c("hate"), timeout = 30, language='en', 
                oauth = my_oauth)
   
-  cat("------Pre Processing Tweets------------")
+  cat("Pre Processing Tweets")
   #Parse Tweets  
   tweets_test.df <- parseTweets("tweets.json", simplify = TRUE)
   tweets_text_test = tweets_test.df$text
@@ -220,7 +215,7 @@ while(TRUE)
   td.mat_test <- as.matrix(a_test)
   #td.mat_test
   
-  cat("--------Finding Commong Top K words From Training Data------")
+  cat("Finding Commong Top K words From Training Data")
   
   #Find words in td.mat_test which are existent in the top-K words in the training data 
   commonWords <- intersect(colnames(OutputDF),colnames(td.mat_test))
@@ -269,26 +264,26 @@ while(TRUE)
   
   datastream_test <- datastream_dataframe(data=commonTopK_DF)
   
-  cat("---Prediciting Class for current Test data using Trained Model----")
+  cat("Prediciting Class for current Test data using Trained Model")
   
   #Predict Class for current test data using the trained model
   scores <- predict(mymodel_classifier, newdata=commonTopK_DF, type="response")
   str(scores)
   
-  cat("----Prediction Done-----")
+  cat("Prediction Done")
   
-  cat("----Updating The existing Model--------")
+  cat("Updating The existing Model")
   #Update the existing model, with the new test data, by keeping reset=FALSE
   mymodel_classifier <- trainMOA(model = mymodel_classifier$model, 
                                  formula = tweetFormula , 
                                  data = datastream_test,reset=FALSE)
   #Computes and Prints Accuracy table for love and hate classfication
   
-  cat("-------Displaying the Accuracy Table----------")
+  cat("Displaying the Accuracy Table")
   AccuractyTable <- table(scores, commonTopK_DF$verdict)
   AccuractyTable
   
-  cat("-----Displaying the Accuracy Percentage------")
+  cat("Displaying the Accuracy Percentage")
   if(nrow(AccuractyTable)==1){
     if(row.names(AccuractyTable)=="Love")
     {
@@ -307,7 +302,7 @@ while(TRUE)
   cat("Love Accuracy: " ,loveAccuracy*100,"%\n")
   cat("Hate Accuracy: ",hateAccuracy*100,"%\n")
   
-  cat("-----Press Any Key to Capture Next Tweet----------")
+  cat("Press Any Key to Capture Next Tweet")
   
   pause()
   
