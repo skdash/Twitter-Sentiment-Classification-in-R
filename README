@@ -1,0 +1,23 @@
+***************************Project Description************************************
+
+Love/hate twitter sentiment analyzer can be used to classify incoming live tweets into 2 classes(Love/Hate) using a feature selection technique (eg - top-K words)  
+
+*******************************List of required packages**************************
+The below is the list of required packages to be installed and loaded onto the environment for running the script:
+library(streamR)
+library(stringr)
+library(SnowballC)
+library(ROAuth)
+library(tm)
+library(RMOA)
+library(kernlab)
+
+***********************Intructions to execute the R script*************************
+
+1.To run the script enter the command : 
+source("demo.R",echo = TRUE)
+
+2.Once the script file starts running, initially it would take 60 seconds to capture tweets for the training set of data, by entering the PIN from the twitter api site for the handshake process.
+
+Each stage of the project would be displayed in the console, indicating the current part of script which is being executed. 
+Initially, a training model will be built using the training data and this model would be used to predict the classification of the new incoming stream (test data). Once this is done, an accuracy table would be displayed showing the accuracy of love/hate classification. Then, the user will be prompted to press ENTER to test on a new set of data and so on. Quit the demo to exit from our love/hate sentiment analyzer. 
